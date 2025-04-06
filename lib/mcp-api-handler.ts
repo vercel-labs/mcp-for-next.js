@@ -1,4 +1,3 @@
-import getRawBody from "raw-body";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http";
@@ -6,7 +5,7 @@ import { createClient } from "redis";
 import { Socket } from "net";
 import { Readable } from "stream";
 import { ServerOptions } from "@modelcontextprotocol/sdk/server/index.js";
-import { config } from "../pages/api/mcp";
+import { maxDuration } from "@/app/sse/route";
 
 interface SerializedRequest {
   requestId: string;
@@ -40,10 +39,7 @@ export function initializeMcpApiHandler(
 
   let servers: McpServer[] = [];
 
-  return async function mcpApiHandler(
-    req: IncomingMessage,
-    res: ServerResponse
-  ) {
+  return async function mcpApiHandler(req: Request, res: ServerResponse) {
     await redisPromise;
     const url = new URL(req.url || "", "https://example.com");
     if (url.pathname === "/sse") {
@@ -139,7 +135,6 @@ export function initializeMcpApiHandler(
 
       let timeout: NodeJS.Timeout;
       let resolveTimeout: (value: unknown) => void;
-      const maxDuration = config.maxDuration || 800;
       const waitPromise = new Promise((resolve) => {
         resolveTimeout = resolve;
         timeout = setTimeout(() => {
@@ -155,7 +150,9 @@ export function initializeMcpApiHandler(
         res.statusCode = 200;
         res.end();
       }
-      req.on("close", () => resolveTimeout("client hang up"));
+      req.signal.addEventListener("abort", () =>
+        resolveTimeout("client hang up")
+      );
 
       await server.connect(transport);
       const closeReason = await waitPromise;
@@ -164,10 +161,7 @@ export function initializeMcpApiHandler(
     } else if (url.pathname === "/message") {
       console.log("Received message");
 
-      const body = await getRawBody(req, {
-        length: req.headers["content-length"],
-        encoding: "utf-8",
-      });
+      const body = await req.text();
 
       const sessionId = url.searchParams.get("sessionId") || "";
       if (!sessionId) {
@@ -181,7 +175,7 @@ export function initializeMcpApiHandler(
         url: req.url || "",
         method: req.method || "",
         body: body,
-        headers: req.headers,
+        headers: Object.fromEntries(req.headers.entries()),
       };
 
       // Handles responses from the /sse endpoint.

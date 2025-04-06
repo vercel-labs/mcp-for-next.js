@@ -10,7 +10,6 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",
     "next": "15.2.4",
-    "raw-body": "^3.0.0",
     "redis": "^4.7.0",
     "zod": "^3.24.2"
   },
