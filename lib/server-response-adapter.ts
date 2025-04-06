@@ -35,7 +35,6 @@ export function createServerResponseAdapter(
         throw new Error("Status message of writeHead not supported");
       }
       wroteHead = true;
-      console.log("writeHead", statusCode, headers);
       writeHeadResolver({
         statusCode,
         headers,
@@ -59,11 +58,9 @@ export function createServerResponseAdapter(
         writeHead(200);
       }
       if (!controller) {
-        console.log("write buffer", chunk);
         bufferedData.push(new TextEncoder().encode(chunk as string));
         return true;
       }
-      console.log("write chunk", chunk);
       controller.enqueue(new TextEncoder().encode(chunk as string));
       return true;
     };
@@ -87,7 +84,6 @@ export function createServerResponseAdapter(
         } catch {
           /* May be closed on tcp layer */
         }
-        console.log("end");
         return fakeServerResponse;
       },
       on: (event: string, listener: (...args: any[]) => void) => {
@@ -103,7 +99,6 @@ export function createServerResponseAdapter(
     fn(fakeServerResponse as ServerResponse);
 
     const head = await writeHeadPromise;
-    console.log("head", head);
 
     const response = new Response(
       new ReadableStream({
