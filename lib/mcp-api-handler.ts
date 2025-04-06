@@ -20,7 +20,6 @@ export function initializeMcpApiHandler(
   initializeServer: (server: McpServer) => void,
   serverOptions: ServerOptions = {}
 ) {
-  const maxDuration = config.maxDuration || 800;
   const redisUrl = process.env.REDIS_URL || process.env.KV_URL;
   if (!redisUrl) {
     throw new Error("REDIS_URL environment variable is not set");
@@ -140,6 +139,7 @@ export function initializeMcpApiHandler(
 
       let timeout: NodeJS.Timeout;
       let resolveTimeout: (value: unknown) => void;
+      const maxDuration = config.maxDuration || 800;
       const waitPromise = new Promise((resolve) => {
         resolveTimeout = resolve;
         timeout = setTimeout(() => {

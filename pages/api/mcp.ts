@@ -21,6 +21,9 @@ const handler = initializeMcpApiHandler(
 
 export const config = {
   maxDuration: 60,
+  api: {
+    bodyParser: false,
+  },
 };
 
 export default handler;
