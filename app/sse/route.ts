@@ -1,5 +1,5 @@
 import { createServerResponseAdapter } from "@/lib/server-response-adapter";
-import { mcpHandler } from "../message/route";
+import { mcpHandler } from "../mcp";
 
 export const maxDuration = 60;
 
