@@ -27,6 +27,7 @@ async function main() {
 
   const result = await client.listTools();
   console.log(result);
+  client.close();
 }
 
 main();
