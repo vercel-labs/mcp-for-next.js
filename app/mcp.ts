@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { initializeMcpApiHandler } from "./mcp-api-handler";
+import { initializeMcpApiHandler } from "../lib/mcp-api-handler";
 
 export const mcpHandler = initializeMcpApiHandler(
   (server) => {
