@@ -6,6 +6,7 @@ import { Socket } from "net";
 import { Readable } from "stream";
 import { ServerOptions } from "@modelcontextprotocol/sdk/server/index.js";
 import { maxDuration } from "@/app/sse/route";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 
 interface SerializedRequest {
   requestId: string;
@@ -39,10 +40,76 @@ export function initializeMcpApiHandler(
 
   let servers: McpServer[] = [];
 
+  let statelessServer: McpServer;
+  const statelessTransport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+  });
   return async function mcpApiHandler(req: Request, res: ServerResponse) {
     await redisPromise;
     const url = new URL(req.url || "", "https://example.com");
-    if (url.pathname === "/sse") {
+    if (url.pathname === "/mcp") {
+      if (req.method === "GET") {
+        console.log("Received GET MCP request");
+        res.writeHead(405).end(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            error: {
+              code: -32000,
+              message: "Method not allowed.",
+            },
+            id: null,
+          })
+        );
+        return;
+      }
+      if (req.method === "DELETE") {
+        console.log("Received DELETE MCP request");
+        res.writeHead(405).end(
+          JSON.stringify({
+            jsonrpc: "2.0",
+            error: {
+              code: -32000,
+              message: "Method not allowed.",
+            },
+            id: null,
+          })
+        );
+        return;
+      }
+      console.log("Got new MCP connection", req.url, req.method);
+
+      if (!statelessServer) {
+        statelessServer = new McpServer(
+          {
+            name: "mcp-typescript server on vercel",
+            version: "0.1.0",
+          },
+          serverOptions
+        );
+
+        initializeServer(statelessServer);
+        await statelessServer.connect(statelessTransport);
+      }
+
+      // Parse the request body
+      let bodyContent;
+      if (req.method === "POST") {
+        const contentType = req.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+          bodyContent = await req.json();
+        } else {
+          bodyContent = await req.text();
+        }
+      }
+
+      const incomingRequest = createFakeIncomingMessage({
+        method: req.method,
+        url: req.url,
+        headers: Object.fromEntries(req.headers),
+        body: bodyContent,
+      });
+      await statelessTransport.handleRequest(incomingRequest, res);
+    } else if (url.pathname === "/sse") {
       console.log("Got new SSE connection");
 
       const transport = new SSEServerTransport("/message", res);
@@ -87,7 +154,7 @@ export function initializeMcpApiHandler(
           method: request.method,
           url: request.url,
           headers: request.headers,
-          body: request.body,
+          body: request.body, // This could already be an object from earlier parsing
         });
         const syntheticRes = new ServerResponse(req);
         let status = 100;
@@ -162,6 +229,12 @@ export function initializeMcpApiHandler(
       console.log("Received message");
 
       const body = await req.text();
+      let parsedBody;
+      try {
+        parsedBody = JSON.parse(body);
+      } catch (e) {
+        parsedBody = body;
+      }
 
       const sessionId = url.searchParams.get("sessionId") || "";
       if (!sessionId) {
@@ -174,7 +247,7 @@ export function initializeMcpApiHandler(
         requestId,
         url: req.url || "",
         method: req.method || "",
-        body: body,
+        body: parsedBody,
         headers: Object.fromEntries(req.headers.entries()),
       };
 
@@ -249,9 +322,13 @@ function createFakeIncomingMessage(
     } else if (Buffer.isBuffer(body)) {
       readable.push(body);
     } else {
-      readable.push(JSON.stringify(body));
+      // Ensure proper JSON-RPC format
+      const bodyString = JSON.stringify(body);
+      readable.push(bodyString);
     }
     readable.push(null); // Signal the end of the stream
+  } else {
+    readable.push(null); // Always end the stream even if no body
   }
 
   // Create the IncomingMessage instance
