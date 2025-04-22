@@ -1,7 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
-const origin = "http://localhost:3000"
+const origin = process.argv[2] || "https://mcp-on-vercel.vercel.app";
 
 async function main() {
   const transport = new StreamableHTTPClientTransport(new URL(`${origin}/mcp`));

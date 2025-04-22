@@ -3,14 +3,12 @@ import { mcpHandler } from "../../lib/mcp";
 
 export const maxDuration = 60;
 
-export async function GET(req: Request) {
+const handler = (req: Request) => {
   return createServerResponseAdapter(req.signal, (res) => {
     mcpHandler(req, res);
   });
-}
+};
 
-export async function POST(req: Request) {
-  return createServerResponseAdapter(req.signal, (res) => {
-    mcpHandler(req, res);
-  });
-}
+export { handler as GET };
+export { handler as POST };
+export { handler as DELETE };
