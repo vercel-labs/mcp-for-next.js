@@ -1,4 +1,7 @@
-# Example MCP Server built on Next.js using @vercel/mcp-adapter
+# Example Next.js MCP Server
+
+**Uses `@vercel/mcp-adapter`**
+
 
 ## Usage
 
