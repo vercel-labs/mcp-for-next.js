@@ -1,12 +1,11 @@
+import { createMcpHandler } from "@vercel/mcp-adapter";
 import { z } from "zod";
-import { initializeMcpApiHandler } from "../lib/mcp-api-handler";
 
-export const mcpHandler = initializeMcpApiHandler(
+const handler = createMcpHandler(
   (server) => {
-    // Add more tools, resources, and prompts here
     server.tool(
       "echo",
-      "Returns the message you give it",
+      "Echo a message",
       { message: z.string() },
       async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
@@ -21,5 +20,14 @@ export const mcpHandler = initializeMcpApiHandler(
         },
       },
     },
+  },
+  {
+    redisUrl: process.env.REDIS_URL,
+    sseEndpoint: "/sse",
+    streamableHttpEndpoint: "/mcp",
+    verboseLogs: true,
+    maxDuration: 60,
   }
 );
+
+export { handler as GET, handler as POST, handler as DELETE };
