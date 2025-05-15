@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@vercel/mcp-adapter": "0.4.0",
+    "@vercel/mcp-adapter": "0.4.1",
     "next": "15.2.4",
     "redis": "^4.7.0",
     "zod": "^3.24.2"

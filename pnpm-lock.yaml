@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@vercel/mcp-adapter':
-    specifier: 0.4.0
-    version: 0.4.0(next@15.2.4)
+    specifier: 0.4.1
+    version: 0.4.1(next@15.2.4)
   next:
     specifier: 15.2.4
     version: 15.2.4(react-dom@19.1.0)(react@19.1.0)
@@ -384,8 +384,8 @@ packages:
       csstype: 3.1.3
     dev: true
 
-  /@vercel/mcp-adapter@0.4.0(next@15.2.4):
-    resolution: {integrity: sha512-oPmjt0q5lDTS09ubeuV/ymMY6EQAzF7VOHCfZDfunQ3XlJXrEu6cUS/JRrZJzOKBYBjI15U0YnqOiretJnbmKw==}
+  /@vercel/mcp-adapter@0.4.1(next@15.2.4):
+    resolution: {integrity: sha512-/P1J1KGbQieNT9dKSt4Y+ZrLcnuf6W1cUMR0V+AcWRfQs7ilz64GaLVdpyUIoZFb45VHqRvTVEZ8YmQspEM/Kw==}
     peerDependencies:
       next: '>=13.0.0'
     dependencies:
