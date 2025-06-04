@@ -22,10 +22,10 @@ const handler = createMcpHandler(
     },
   },
   {
-    redisUrl: process.env.REDIS_URL,
     basePath: "",
     verboseLogs: true,
     maxDuration: 60,
+    disableSse: true,
   }
 );
 
