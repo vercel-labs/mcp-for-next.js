@@ -22,7 +22,7 @@ dependencies:
     version: 4.7.1
   zod:
     specifier: ^3.24.2
-    version: 3.24.4
+    version: 3.25.51
 
 devDependencies:
   '@types/node':
@@ -1278,10 +1278,6 @@ packages:
       zod: ^3.24.1
     dependencies:
       zod: 3.25.51
-    dev: false
-
-  /zod@3.24.4:
-    resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
     dev: false
 
   /zod@3.25.51:
