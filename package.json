@@ -17,6 +17,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "typescript": "^5"
