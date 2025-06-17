@@ -8,6 +8,9 @@ dependencies:
   '@vercel/mcp-adapter':
     specifier: 0.8.2
     version: 0.8.2(@modelcontextprotocol/sdk@1.12.0)(next@15.2.4)
+  dotenv:
+    specifier: ^16.5.0
+    version: 16.5.0
   next:
     specifier: 15.2.4
     version: 15.2.4(react-dom@19.1.0)(react@19.1.0)
@@ -590,6 +593,11 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /dotenv@16.5.0:
+    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
+    engines: {node: '>=12'}
+    dev: false
 
   /dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
