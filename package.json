@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:client": "node scripts/test-client.mjs"
   },
   "dependencies": {
     "@vercel/mcp-adapter": "0.8.2",
