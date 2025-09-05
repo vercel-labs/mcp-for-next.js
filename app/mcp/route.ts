@@ -1,6 +1,7 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 
+// StreamableHttp server
 const handler = createMcpHandler(
   async (server) => {
     server.tool(
@@ -11,7 +12,7 @@ const handler = createMcpHandler(
       },
       async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
-      })
+      }),
     );
   },
   {
@@ -27,7 +28,8 @@ const handler = createMcpHandler(
     basePath: "",
     verboseLogs: true,
     maxDuration: 60,
-  }
+    disableSse: true,
+  },
 );
 
 export { handler as GET, handler as POST, handler as DELETE };
