@@ -7,14 +7,32 @@ const handler = createMcpHandler(
     server.registerTool(
       "echo",
       {
-        title: "echo",
+        title: "Echo",
         description: "Echo a message",
-        inputSchema: z.object({
-          message: z.string().min(1).max(100),
-        }),
+        inputSchema: z
+          .object({
+            message: z
+              .string()
+              .min(1)
+              .max(100)
+              .describe("Message to echo back"),
+          })
+          .strict(),
+        outputSchema: z
+          .object({
+            message: z.string().describe("Echoed message"),
+          })
+          .strict(),
+        annotations: {
+          readOnlyHint: true,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
       },
       async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
+        structuredContent: { message },
       })
     );
   },
@@ -22,9 +40,7 @@ const handler = createMcpHandler(
   {
     basePath: "",
     verboseLogs: true,
-    maxDuration: 60,
-    disableSse: true,
   }
 );
 
-export { handler as GET, handler as POST, handler as DELETE };
+export { handler as GET, handler as POST };

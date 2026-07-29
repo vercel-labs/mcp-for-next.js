@@ -1,24 +1,33 @@
 # Example Next.js MCP Server
 
-**Uses `mcp-handler`**
+This template uses [`mcp-handler` 2](https://www.npmjs.com/package/mcp-handler) and the MCP TypeScript SDK v2 to add a stateless MCP server to a Next.js App Router application.
 
 ## Usage
 
-This sample app uses the [Vercel MCP Adapter](https://www.npmjs.com/package/mcp-handler) that allows you to drop in an MCP server on a group of routes in any Next.js project.
+Update `app/mcp/route.ts` with your tools, prompts, and resources following the [MCP TypeScript SDK v2 documentation](https://ts.sdk.modelcontextprotocol.io/v2/).
 
-Update `app/[transport]/route.ts` with your tools, prompts, and resources following the [MCP TypeScript SDK documentation](https://github.com/modelcontextprotocol/typescript-sdk/tree/main?tab=readme-ov-file#server).
+Start the application and connect an MCP client to:
+
+```
+http://localhost:3000/mcp
+```
+
+## Protocol support
+
+- The current 2026-07-28 MCP protocol is served natively.
+- Stateless clients using 2025-era Streamable HTTP are supported by the compatibility layer.
+- The deprecated HTTP+SSE transport is not supported. Redis is not required.
 
 ## Notes for running on Vercel
 
-- To use the SSE transport, requires a Redis attached to the project under `process.env.REDIS_URL` and toggling the `disableSse` flag to `false` in `app/mcp/route.ts`
+- Requires Node.js 20 or later
 - Make sure you have [Fluid compute](https://vercel.com/docs/functions/fluid-compute) enabled for efficient execution
-- After enabling Fluid compute, open `app/route.ts` and adjust `maxDuration` to 800 if you using a Vercel Pro or Enterprise account
 - [Deploy the Next.js MCP template](https://vercel.com/templates/next.js/model-context-protocol-mcp-with-next-js)
 
 ## Sample Client
 
-`script/test-client.mjs` contains a sample client to try invocations.
+`scripts/test-client.mjs` connects over Streamable HTTP, lists the available tools, and calls `echo`.
 
 ```sh
-node scripts/test-client.mjs https://mcp-for-next-js.vercel.app
+pnpm test:client -- https://mcp-for-next-js.vercel.app
 ```

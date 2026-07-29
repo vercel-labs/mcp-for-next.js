@@ -1,33 +1,38 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import {
+  Client,
+  StreamableHTTPClientTransport,
+} from "@modelcontextprotocol/client";
 
-const origin = process.argv[2] || "https://mcp-for-next-js.vercel.app";
+const origin =
+  process.argv.slice(2).find((argument) => argument !== "--") ||
+  "https://mcp-for-next-js.vercel.app";
 
 async function main() {
-  const transport = new SSEClientTransport(new URL(`${origin}/sse`));
+  const client = new Client({
+    name: "mcp-for-next-js-example-client",
+    version: "1.0.0",
+  });
+  const endpoint = new URL("/mcp", `${origin}/`);
+  const transport = new StreamableHTTPClientTransport(endpoint);
 
-  const client = new Client(
-    {
-      name: "example-client",
-      version: "1.0.0",
-    },
-    {
-      capabilities: {
-        prompts: {},
-        resources: {},
-        tools: {},
-      },
-    }
-  );
-
-  console.log("Connecting to", origin);
+  console.log("Connecting to", endpoint.toString());
   await client.connect(transport);
 
   console.log("Connected", client.getServerCapabilities());
 
-  const result = await client.listTools();
-  console.log(result);
-  client.close();
+  const { tools } = await client.listTools();
+  console.log("Tools", tools);
+
+  const result = await client.callTool({
+    name: "echo",
+    arguments: { message: "Hello from the MCP client" },
+  });
+  console.log("Result", result);
+
+  await client.close();
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
